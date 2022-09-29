@@ -1,0 +1,10 @@
+{% for tag in collectionTags %}
+  {% assign collectionStr = tag | remove: ' collection' | capitalize %}
+  {% if collectionStr == 'Rei x nani' %}
+  	{% assign collectionStr = 'REI x NANI' %}
+  {% endif %}
+
+  <li class="tag text__body">
+    <button type="button" tabindex="0" name="{{ tag }}" title="Narrow selection to products matching tag {{ collectionStr }}">{{ collectionStr }}</button>
+  </li>
+{% endfor %}

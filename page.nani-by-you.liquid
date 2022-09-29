@@ -1,0 +1,174 @@
+{% layout 'theme.nani-by-you' %}
+
+{% section 'nani-by-you-hero' %}
+
+<div class="page-width page-content">
+	<div class="grid">
+      <!-- CUSTOM CONTENT -->
+      <div id="nby-builder">
+        <div class="nby-builder-inner loading">
+          <!-- DT FILTERS -->
+          <div class="shopify-section filters-container desktop-filters template-collection">
+            <div id="CollectionSidebar-1" class="c-collection__sidebar" data-section-id="collection-sidebar-1" data-section-type="collection-sidebar" data-combine-tags="true" data-style="sidebar">
+              <!-- TOPS -->
+              <div class="collection-sidebar filter-tops">
+                <h3 class="filter-title">Tops</h3>
+                <!-- COVERAGE -->
+                <div class="coverage-top" data-sub="category">
+                  <div class="collection-sidebar__group">
+                    <button type="button" class="collapsible-trigger collapsible-trigger-btn collapsible--auto-height tag-list__header text__body" aria-controls="filter-menu-1" aria-expanded="false">
+                      <span class="collapsible-trigger-btn-label">Coverage</span>
+                      <span class="collapsible-trigger__icon collapsible-trigger__icon--open" role="presentation">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16">
+                          <path d="M1.57 1.59l12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                    <div id="filter-menu-1" class="collapsible-content collapsible-content--sidebar">
+                      <div class="collapsible-content__inner">
+                        <ul class="no-bullets tag-list tag-list--checkboxes">
+                          {% include 'nani-by-you-top-coverage' %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- COLLECTION -->
+                <div class="collection-top" data-sub="category">
+                  <div class="collection-sidebar__group">
+                    <button type="button" class="collapsible-trigger collapsible-trigger-btn collapsible--auto-height tag-list__header text__body" aria-controls="filter-menu-2" aria-expanded="false">
+                      <span class="collapsible-trigger-btn-label">Collection</span>
+                      <span class="collapsible-trigger__icon collapsible-trigger__icon--open" role="presentation">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16">
+                          <path d="M1.57 1.59l12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                    <div id="filter-menu-2" class="collapsible-content collapsible-content--sidebar" style="height: 0px;">
+                      <div class="collapsible-content__inner">
+                        <ul class="no-bullets tag-list tag-list--checkboxes">
+                          {% include 'nani-by-you-collections' %}
+                          {% include 'nani-by-you-collections-builder' %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- COLOR -->
+                <div class="color-top" data-sub="category">
+                  <div class="collection-sidebar__group">
+                    <button type="button" class="collapsible-trigger collapsible-trigger-btn collapsible--auto-height tag-list__header text__body" aria-controls="filter-menu-3" aria-expanded="false">
+                      <span class="collapsible-trigger-btn-label">Color</span>
+                      <span class="collapsible-trigger__icon collapsible-trigger__icon--open" role="presentation">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16">
+                          <path d="M1.57 1.59l12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                    <div id="filter-menu-3" class="collapsible-content collapsible-content--sidebar" style="height: 0px;">
+                      <div class="collapsible-content__inner">
+                        <ul class="no-bullets tag-list tag-list--swatches">
+                          {% include 'nani-by-you-colors' %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- BOTTOMS -->
+              <div class="collection-sidebar filter-bottoms">
+                <h3 class="filter-title">Bottoms</h3>
+                <!-- COVERAGE -->
+                <div class="coverage-btm" data-sub="category">
+                  <div class="collection-sidebar__group">
+                    <button type="button" class="collapsible-trigger collapsible-trigger-btn collapsible--auto-height tag-list__header text__body" aria-controls="filter-menu-4" aria-expanded="false">
+                      <span class="collapsible-trigger-btn-label">Coverage</span>
+                      <span class="collapsible-trigger__icon collapsible-trigger__icon--open" role="presentation">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16">
+                          <path d="M1.57 1.59l12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                    <div id="filter-menu-4" class="collapsible-content collapsible-content--sidebar">
+                      <div class="collapsible-content__inner">
+                        <ul class="no-bullets tag-list tag-list--checkboxes">
+                          {% include 'nani-by-you-bottom-coverage' %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- COLLECTION -->
+                <div class="collection-btm" data-sub="category">
+                  <div class="collection-sidebar__group">
+                    <button type="button" class="collapsible-trigger collapsible-trigger-btn collapsible--auto-height tag-list__header text__body" aria-controls="filter-menu-5" aria-expanded="false">
+                      <span class="collapsible-trigger-btn-label">Collection</span>
+                      <span class="collapsible-trigger__icon collapsible-trigger__icon--open" role="presentation">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16">
+                          <path d="M1.57 1.59l12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                    <div id="filter-menu-5" class="collapsible-content collapsible-content--sidebar" style="height: 0px;">
+                      <div class="collapsible-content__inner">
+                        <ul class="no-bullets tag-list tag-list--checkboxes">
+                          {% include 'nani-by-you-collections-builder' %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- COLOR -->
+                <div class="color-btm" data-sub="category">
+                  <div class="collection-sidebar__group">
+                    <button type="button" class="collapsible-trigger collapsible-trigger-btn collapsible--auto-height tag-list__header text__body" aria-controls="filter-menu-6" aria-expanded="false">
+                      <span class="collapsible-trigger-btn-label">Color</span>
+                      <span class="collapsible-trigger__icon collapsible-trigger__icon--open" role="presentation">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16">
+                          <path d="M1.57 1.59l12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none" fill-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                    </button>
+                    <div id="filter-menu-6" class="collapsible-content collapsible-content--sidebar" style="height: 0px;">
+                      <div class="collapsible-content__inner">
+                        <ul class="no-bullets tag-list tag-list--swatches">
+                          {% include 'nani-by-you-colors' %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- APPLY FILTERS -->
+            <div class="nby-apply-filters">
+                <button class="nby-apply-filters-button btn">APPLY FILTERS</button>
+            </div>
+          </div>
+          <!-- SLIDERS -->
+          <div class="nby-builder-slides">
+            <!-- MOBILE FILTER BUTTON -->
+            <div class="nby-mobile-filter-button">
+                <button id="nby-filter-pop" class="btn">FILTER</button>
+            </div>
+            <div class="slide-wrap">
+                <div id="tops"></div>
+            </div>
+            <div class="slide-wrap">
+                <div id="bottoms"></div>
+            </div>
+            <!-- ADD TO CART -->
+            <div class="nby-builder-atc">
+                <p class="color-disclaimer"><sup>*</sup>Your selected colors are from different collections and may be a different shade.</p>
+                <button id="nby-atc" class="btn">ADD BOTH TO CART</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END CUSTOM CONTENT -->
+
+      <div class="rte rte--nomargin">
+        {{ page.content }}
+      </div>
+    </div>
+</div>

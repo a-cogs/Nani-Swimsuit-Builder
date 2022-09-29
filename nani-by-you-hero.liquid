@@ -1,0 +1,137 @@
+<div id="nby-hero">
+    <div class="nby-hero-inner">
+        {% if section.settings.title != blank or section.settings.text != blank or section.settings.subtext != blank or section.settings.button_label != blank %}
+            <div class="nby-hero-text">
+                {% if section.settings.title != blank %}
+                    <h1 class="nby-heading" style="color: {{ section.settings.heading_color }};">{{ section.settings.title | escape }}</h1>
+                {% endif %}
+                {% if section.settings.text != blank %}
+                    <div class="nby-text" style="color: {{ section.settings.text_color }};">{{ section.settings.text }}</div>
+                {% endif %}
+                {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+                    <a href="{{ section.settings.button_link }}" class="btn nby-button" style="background-color: {{ section.settings.button_bg_color }}; color: {{ section.settings.button_text_color }};">{{ section.settings.button_label }}</a>
+                {% endif %}
+                {% if section.settings.subtext %}
+                    <p class="nby-subtext" style="color: {{ section.settings.text_color }};">{{ section.settings.subtext }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="nby-hero-img">
+            {% if section.settings.hero_image != blank %}
+                <img class="nby-hero_image"
+                     srcset="{{ section.settings.hero_image | img_url: '2400x' }} 2400w,
+                             {{ section.settings.hero_image | img_url: '2100x' }} 2100w,
+                             {{ section.settings.hero_image | img_url: '1800x' }} 1800w,
+                             {{ section.settings.hero_image | img_url: '1500x' }} 1500w,
+                             {{ section.settings.hero_image | img_url: '1200x' }} 1200w,
+                             {{ section.settings.hero_image | img_url: '900x' }} 900w,
+                             {{ section.settings.hero_image | img_url: '600x' }} 600w,
+                             {{ section.settings.hero_image | img_url: '550x' }} 550w,
+                             {{ section.settings.hero_image | img_url: '350x' }} 350w"
+                     alt="Nani by You hero">
+                {% if section.settings.mobile_image != blank %}
+                    <img
+                    class="nby-hero-mobile_image"
+                    srcset="{{ section.settings.mobile_image | img_url: '550x' }} 550w,
+                        	{{ section.settings.mobile_image | img_url: '350x' }} 350w"
+                    alt="mobile hero">
+                    <style>
+                    .nby-hero-img .nby-hero-mobile_image {
+                        display: none;
+                    }
+                    
+                    @media screen and (max-width: 767px) {
+                        .nby-hero_image {
+                            display: none;
+                        }
+
+                        .nby-hero-img .nby-hero-mobile_image {
+                            display: block;
+                        }
+                    }
+                    </style>
+                {% endif %}
+            {% else %}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Hero Cusomization",
+    "class": "index-section--flush",
+    "settings": [
+        {
+        "type": "image_picker",
+        "id": "hero_image",
+        "label": "Hero Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Mobile Hero Image",
+		"info": "If you want to use the same image for desktop and mobile - do not select a mobile image."
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Hero heading text"
+      },
+      {
+        "type": "color",
+        "id": "heading_color",
+        "label": "Change heading color",
+        "default": "#040503"
+      },
+      {
+        "type": "textarea",
+        "id": "text",
+        "label": "Text",
+		"default": "Basic hero text to describe the page"
+      },
+      {
+        "type": "text",
+        "id": "subtext",
+        "label": "Subtext",
+        "default": "Some small disclaimer-style text"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Change text color",
+        "default": "#040503"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      },
+      {
+        "type": "color",
+        "id": "button_bg_color",
+        "label": "Change button color",
+        "default": "#040503"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Change button text color",
+        "default": "#ffffff"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nani by You Hero",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}

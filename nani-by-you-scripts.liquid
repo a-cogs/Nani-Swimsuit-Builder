@@ -1,0 +1,613 @@
+<script>  
+////////////////////////
+// PRE-DOM OPERATIONS
+////////////////////////
+// INVENTORY ARRAYS
+const topInv = [];
+const btmInv = [];
+let topTemp = [];
+let btmTemp = [];
+
+// FILTER ARRAYS
+const topFilters = [];
+const btmFilters = [];
+const allCollections = [];
+const allColors = ['black','blue','burgundy','gray','green','multicolored','navy','pink','purple','red','teal','turquoise','yellow','white','orange'];
+const allTops = ['tankini','midkini','crop','bralette'];
+const allBottoms = ['high-rise','mid-rise','bikini', 'low-rise'];
+
+// Build Collections list for use in both Liquid and JS
+{% include 'nani-by-you-collections' %}
+{% for tag in collectionTags %}
+  allCollections.push( "{{ tag }}" );
+{% endfor %}
+
+// BUILD TOP/BOTTOM MASTER INVENTORIES
+(() => {
+let prod;
+
+{% paginate collections['tops'].products by 1000 %} 
+{% for product in collections['tops'].products %}
+ 	{% if product.available == true %}
+      prod = {
+          'title': "{{product.title}}",
+          'tags': {{product.tags | downcase | split: ''}},
+          'images': [
+              '{{product.images[0] | img_url: "450x"}}',
+              '{{product.images[3] | img_url: "230x"}}'
+          ],
+          'collections': [
+          {% for col in product.collections %}
+              {% if forloop.last == true %}
+              "{{col.title | downcase}}"
+              {% else %}
+              "{{col.title | downcase}}", 
+              {% endif %}
+          {% endfor %}
+          ],
+          'id': '{{product.id}}',
+          'available': '{{product.available}}',
+          'price': '{{product.price | money_without_currency}}',
+          'variants': [
+          {% for size in product.variants %}
+              {% if size.available == true %}
+                {% if forloop.last == true %}
+                    {
+ 					'title': '{{size.option1 | strip}}',
+ 					'id': {{size.id | strip}}
+ 					}
+                {% else %}
+ 					{
+ 					'title': '{{size.option1 | strip}}',
+ 					'id': {{size.id | strip}}
+ 					}, 
+                {% endif %}
+              {% endif %}
+          {% endfor %}
+          ]
+      };
+
+      topInv.push(prod);
+  	{% endif %}
+{% endfor %}
+{% endpaginate %}
+  
+// Set initial top inventory
+topTemp.push(...topInv);
+
+{% paginate collections['bottoms'].products by 1000 %}
+{% for product in collections['bottoms'].products %}
+  	{% if product.available == true %}
+      prod = {
+          'title': "{{product.title}}",
+          'tags': {{product.tags | downcase | split: ''}},
+          'images': [
+              '{{product.images[0] | img_url: "450x"}}',
+              '{{product.images[3] | img_url: "230x"}}'
+          ],
+          'collections': [
+          {% for col in product.collections %}
+              {% if forloop.last == true %}
+              "{{col.title | downcase}}"
+              {% else %}
+              "{{col.title | downcase}}", 
+              {% endif %}
+          {% endfor %}
+          ],
+          'id': '{{product.id}}',
+          'available': '{{product.available}}',
+          'price': '{{product.price | money_without_currency}}',
+          'variants': [
+          {% for size in product.variants %}
+              {% if size.available == true %}
+                {% if forloop.last == true %}
+                    {
+ 					'title': '{{size.option1 | strip}}',
+ 					'id': {{size.id | strip}}
+ 					}
+                {% else %}
+ 					{
+ 					'title': '{{size.option1 | strip}}',
+ 					'id': {{size.id | strip}}
+ 					}, 
+                {% endif %}
+              {% endif %}
+          {% endfor %}
+          ]
+      };
+
+      btmInv.push(prod);
+  	{% endif %}
+{% endfor %}
+{% endpaginate %}
+  
+// Set initial bottom inventory
+btmTemp.push(...btmInv);
+})();
+  
+///////////////////////////
+// DOM READY OPERATIONS
+///////////////////////////
+document.addEventListener("DOMContentLoaded", function(){
+  // WAIT FOR JQUERY
+  let jqLoaded = setInterval(() => {
+    if ( jQuery ) {
+		clearInterval(jqLoaded);
+    	//console.log('jq is good, you are in');
+    
+    	// RUN AFTER SLICK IS READY
+    	jQuery.getScript('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js', () => {
+                         
+          ///////////////////////////////////////////////////////
+          // BUILD FILTERS BASED ON INVENTORY AVAILABILITY
+
+          //Compile all filters from tags (color/coverage) and collections in Master Inv.
+          const filterComp = (inv, all, filter, list) => {
+              //Set dedupe array
+              const dedupe = [];
+
+              //Loop through Master Inv. items
+              itemLoop: for ( let i = 0; i < inv.length; i++ ) {
+
+                  //Look at matching filter values    
+                  valueLoop: for ( let v = 0; v < inv[i][filter].length; v++  ) {
+                      let filterVal = inv[i][filter][v].toLowerCase();
+
+                      // Account for inconsistent values
+                      if ( filterVal == 'high_rise' || filterVal == 'highrise' || filterVal == 'high rise' ) {
+                          filterVal = 'high-rise';
+                      }
+                      if ( filterVal == 'mid_rise' || filterVal == 'midrise' || filterVal == 'mid rise' ) {
+                          filterVal = 'mid-rise';
+                      }
+
+                      //Check filter value against all possible matches
+                      matchLoop: for ( let a = 0; a < all.length; a++ ) {
+
+                          //If filter value matches one of the possible options, unhide that option
+                          if ( all[a] == filterVal && !dedupe.includes(filterVal) ) {
+                              dedupe.push(filterVal);
+
+                              //Unhide filter option
+                              let listStyle = ( all[0] == 'black' ) ? 'inline-block' : 'list-item';
+                              document.querySelectorAll(`${list} li.tag button[name="${filterVal}"]`).forEach(function(el){
+                                  el.parentElement.style.display = listStyle;
+                              });
+
+                              break matchLoop;
+                          }
+                      }
+                  }
+              }
+          };
+
+          //Top filters
+          filterComp(topInv, allTops, 'tags', '.filter-tops');
+          filterComp(topInv, allCollections, 'collections', '.filter-tops');
+          filterComp(topInv, allColors, 'tags', '.filter-tops');
+
+          //Bottom filters
+          filterComp(btmInv, allBottoms, 'tags', '.filter-bottoms');
+          filterComp(btmInv, allCollections, 'collections', '.filter-bottoms');
+          filterComp(btmInv, allColors, 'tags', '.filter-bottoms');
+
+          ////////////////////////////////
+          // POPULATE SLIDES FUNCTION
+          const populateSlides = () => {
+            // ENABLE LOADING ANIMATION
+            document.querySelector('.nby-builder-inner').classList.add('loading');
+
+            // SLIDER TREATMENT FOR TOPS AND BOTTOMS
+            for ( let i = 0; i < 2; i++ ) {
+              let tempInv = ( i == 0 ) ? topTemp : btmTemp,
+                  slider = ( i == 0 ) ? '#tops' : '#bottoms',
+                  size = tempInv.length,
+                  empty = false;
+
+              //console.log(`slider: ${slider}, size: ${size}`);
+
+              // Destroy and empty the slider
+              if ( document.querySelector(slider).classList.contains('slick-initialized') ) {
+                jQuery(slider).slick('unslick');
+              }
+              document.querySelector(slider).innerHTML = '';
+
+              // If the inventory is not empty, build the slider
+              if ( size ) {
+                // Adjust inventory if there are fewer than 4 matching results
+                switch ( size ) {
+                  case 1:
+                    tempInv.push(...tempInv, ...tempInv, ...tempInv);
+                    size = tempInv.length;
+                    break;
+                  case 2:
+                  case 3:
+                    tempInv.push(...tempInv);
+                    size = tempInv.length;
+                    break;
+                  default:
+                    break;
+                }
+
+                tempInv.forEach(function(obj, i){
+                  let slideImg = ( obj.images[1].includes('no-image') ) ? obj.images[0] : obj.images[1];
+
+                  jQuery(slider).append(`
+                      <div
+                          class="nby-product"
+                          data-title="${obj.title}"
+                          data-price="${obj.price}"
+                          data-variants=${JSON.stringify(obj.variants)}
+                          data-id="${obj.id}"
+                          data-img="${obj.images[0]}"
+                      >
+                          <img class="lazyload" src="${slideImg}" alt="${obj.title}" data-src="${slideImg}">
+                      </div>
+                  `);
+                });
+              }
+              // Otherwise, show no-match disclaimer
+              else {
+                jQuery(slider).append(`
+                  <div class="no-match">
+                  <p>Oops! Adjust your filters to find ${(i == 0) ? "tops" : "bottoms"}.</p>
+                    </div>
+                `);
+                
+                empty = true;
+              }
+
+              // Slider init
+              if ( !empty ) {
+                jQuery(slider).slick({
+                  centerMode: true,
+                  centerPadding: '0px',
+                  slidesToShow: 3,
+                  lazyLoad: 'ondemand',
+                  slidesToScroll: 1,
+                  arrows: true,
+                  adaptiveHeight: true,
+                  responsive: [
+                    {
+                      breakpoint: 950,
+                      settings: {
+                        slidesToShow: 1
+                      }
+                    },
+                    {
+                      breakpoint: 768,
+                      settings: {
+                        slidesToShow: 3
+                      }
+                    },
+                    {
+                      breakpoint: 590,
+                      settings: {
+                        slidesToShow: 1
+                      }
+                    }
+                  ]
+                });
+              }
+            }
+
+            // DISABLE LOADING ANIMATION
+            document.querySelector('.nby-builder-inner').classList.remove('loading');
+
+            // CLOSE MOBILE FILTERS IF THEY ARE UP
+            if ( document.querySelector('.filters-container.mobile-filters').classList.contains('m-filter-show') ) {
+                document.querySelector('.filters-container.mobile-filters').classList.remove('m-filter-show');
+            }
+          }
+          populateSlides();
+
+          ////////////////////////////////
+          // SHOW/HIDE MOBILE FILTERS 
+          document.addEventListener('click', function(e){
+              let that = e.target;
+              if ( !that.matches('#nby-filter-pop') ) {
+                  return
+              }
+
+              document.querySelector('.filters-container.mobile-filters').classList.add('m-filter-show');
+          });
+
+          document.addEventListener('click', function(e){
+              let that = e.target.closest('button');
+              if ( !that || !that.matches('#nby-filter-close') ) {
+                  return
+              }
+
+              document.querySelector('.filters-container.mobile-filters').classList.remove('m-filter-show');
+          });
+
+          ///////////////////////////////////////////////
+          // FILTER SELECTION / BIND DESKTOP AND MOBILE
+          document.addEventListener('click', function(e){
+              let that = e.target.closest('li');
+              if ( !that || !that.matches('.filters-container li.tag') ) {
+                  return
+              }
+
+              // Remove all native tagging
+              let native = document.querySelectorAll('.filters-container li.tag.tag--active');
+              if ( native.length ) {
+                  native.forEach(function(el){
+                      el.classList.remove('tag--active');
+                  });
+              }
+
+              let cat = that.closest('div[data-sub="category"]').className,
+                  opt = that.querySelector('button').getAttribute('name'),
+                  filters = document.querySelectorAll(`.${cat} .tag > button[name="${opt}"]`);
+
+              // If the option is already active, deselect it
+              if ( that.classList.contains('filter-active') ) {
+                  filters.forEach(function(el){
+                      el.closest('li.tag').classList.remove('filter-active');
+                  });
+              } 
+              // Otherwise, deselect previous option and select new option
+              else {
+                  document.querySelectorAll(`.${cat} li.filter-active`).forEach(function(el){
+                      el.classList.remove('filter-active');
+                  });
+                  filters.forEach(function(el){
+                      el.closest('li.tag').classList.add('filter-active');
+                  });
+              }
+          });
+
+          //////////////////////////////// 	
+          // APPLY FILTERS CLICK
+          document.addEventListener('click', function(e){
+              let that = e.target;
+              if ( !that.matches('.nby-apply-filters-button') ) {
+                  return
+              }
+
+              /****************************
+              Compile filter options
+              ****************************/
+              // Wipe previous filters
+              topFilters.length = 0;
+              btmFilters.length = 0;
+
+              // Collect top filters, then bottom filters
+              for ( let i = 0; i < 2; i++ ) {
+                  let list = ( i == 0 ) ? '.filter-tops' : '.filter-bottoms',
+                      filters = document.querySelectorAll(`.desktop-filters ${list} .filter-active button`);
+
+                  // Populate filters arrays
+                  filters.forEach(function(el){
+                      if ( i == 0 ) {
+                          topFilters.push( el.getAttribute('name') );
+                      } else {
+                          btmFilters.push( el.getAttribute('name') );
+                      }
+                  });
+              }
+
+              // Set temp inventories
+              // Wipe temp inventories
+              topTemp.length = 0;
+              btmTemp.length = 0;
+
+              // Loop tops and bottoms filters
+              listLoop: for ( let i = 0; i < 2; i++ ) {
+                  //console.log('listLoop');
+                  let tempFilter = ( i == 0 ) ? topFilters : btmFilters,
+                      masterInv = ( i == 0 ) ? topInv : btmInv;
+	
+                  // Only filter products if filters are selected
+                  if ( tempFilter.length ) {
+                      // Loop each product
+                      productLoop: for ( let p = 0; p < masterInv.length; p++ ) {
+                          //console.log('productLoop');
+                          let prod = masterInv[p],
+                              tags = prod.collections.concat(prod.tags),
+                              tracker = 0;
+							
+                          // Account for inconsistent values
+                          if ( tags.includes('high_rise') || tags.includes('highrise') || tags.includes('high rise') ) {
+                            tags.push('high-rise');
+                          }
+                          if ( tags.includes('mid_rise') || tags.includes('midrise') || tags.includes('mid rise') ) {
+                            tags.push('mid-rise');
+                          }                          
+                        		
+                          //console.log('tags: ', tags);
+                          // Check for each filter option match on that product
+                          filterLoop: for ( let f = 0; f < tempFilter.length; f++ ) {
+                              // If all filter options match, push to temp inventory
+                              if ( tags.includes( tempFilter[f] ) ) {
+                                  tracker ++;
+
+                                  if ( tracker == tempFilter.length ) {
+                                      if ( i == 0 ) {
+                                          //console.log('top: ', prod);
+                                          topTemp.push(prod);
+                                      } else {
+                                          //console.log('bottom: ', prod);
+                                          btmTemp.push(prod);
+                                      }
+                                  }
+                              } 
+                              // Otherwise, break and move to the next product
+                              else {
+                                  break filterLoop;
+                              }
+                          }
+                      }
+                  }
+
+                  // Otherwise, revert to master inventory
+                  else {
+                      if ( i == 0 ) {
+                          topTemp.push(...topInv);
+                      } else {
+                          btmTemp.push(...btmInv);
+                      }
+                  }
+
+              }
+
+              /*********************************
+              Populate slides and scroll up
+              *********************************/
+              populateSlides();
+              jQuery('html, body').animate({
+                  scrollTop: jQuery('#nby-builder').offset().top
+              }, 'slow');
+
+          });
+    	  
+    	  ////////////////////////////////
+          // ADD TO CART FUNCTIONS 
+
+          // SHOW MODAL AND BUILD CONTENT
+          document.addEventListener('click', function(e){
+              let that = e.target;
+              if ( !that.matches('#nby-atc') || document.querySelectorAll('.nby-product.slick-current').length != 2 ) {
+                  return
+              }
+
+              // Show modal and scroll up
+              document.querySelector('#nby-atc-modal').classList.add('atc-show');
+              jQuery('html, body').animate({
+                  scrollTop: 0
+              }, 'slow');
+
+              // Build product content
+              let atcTotal = 0;
+              currentLoop:for ( let i = 0; i < 2; i++ ) {
+                  let current = ( i == 0 ) ? '#tops' : '#bottoms',
+                      $panel = ( i == 0 ) ? $('#atc-prod-1') : $('#atc-prod-2'),
+                      prod = document.querySelector(`${current} .nby-product.slick-current`),
+                      pId = prod.dataset.id,
+                      pImg = prod.dataset.img,
+                      pTitle = prod.dataset.title,
+                      pPrice = parseInt(prod.dataset.price),
+                      pSizes = JSON.parse(prod.dataset.variants),
+                      sizeBtns = '';
+
+                  // Populate filters arrays
+                  pSizes.forEach(function(size, i, arr){
+                      sizeBtns += `<button class="size-opt" data-id="${arr[i].id}">${arr[i].title}</button>`;
+                  });
+
+                  // Create product HTML
+                  $panel.html(`
+                          <div class="nby-atc-modal-prod-wrap">
+                              <div class="nby-atc-modal-prod-img">
+                                  <img src="${pImg}" alt="${pTitle}">
+                              </div>
+                              <div class="nby-atc-modal-prod-info">
+                                  <h3>${pTitle}</h3>
+                                  <p class="price-text">$${pPrice}</p>
+                                  <div class="nby-atc-modal-prod-size">
+                                      <p class="size-text">SIZE</p>
+                                      ${sizeBtns}
+                                  </div>
+                                  <a href="/pages/swimwear-for-every-body#KiwiSizingChart" target="_blank" class="size-link">SIZE CHART</a>
+                              </div>
+                          </div>
+                      `);
+
+                  // Update price total
+                  atcTotal += pPrice;
+              }
+
+              // Set ATC button total
+              document.getElementById('nby-atc-final').innerHTML = `ADD BOTH TO CART - $${atcTotal}`;
+          });
+
+          // HIDE MODAL
+          document.addEventListener('click', function(e){
+              let that = e.target.closest('button');
+              if ( !that || !that.matches('#nby-atc-modal-close') ) {
+                  return
+              }
+
+              document.querySelector('#nby-atc-modal').classList.remove('atc-show');
+          });
+    
+    	  // SIZE SELECTION
+          document.addEventListener('click', function(e){
+              let that = e.target,
+                  active = that.parentElement.querySelector('.active-size');
+            
+              if ( !that.matches('.nby-atc-modal-prod-size .size-opt') ) {
+                  return
+              }
+
+              if ( active ) {
+              	  active.classList.remove('active-size');
+              }
+              
+              that.classList.add('active-size');
+            
+              if ( document.querySelectorAll('.nby-atc-modal-prod-size .size-opt.active-size').length == 2 ) {
+              	  document.getElementById('nby-atc-final').classList.remove('disabled');
+              }
+          });
+    
+    	  // ADD TO CART FINAL
+          document.addEventListener('click', function(e){
+              let that = e.target;
+              if ( !that.matches('#nby-atc-final') ) {
+                  return
+              }
+
+              let topId = document.querySelector('#atc-prod-1 .size-opt.active-size').dataset.id,
+                  btmId = document.querySelector('#atc-prod-2 .size-opt.active-size').dataset.id;
+
+              // Add to cart
+              let formData = {
+                'items': [
+                  {
+                    'id': topId,
+                    'quantity': 1
+                  },
+                  {
+                    'id': btmId,
+                    'quantity': 1
+                  }
+                ]
+              };
+
+              fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+              })
+              .then(response => {
+                return response.json();
+              })
+              .then(() => {
+                    // Hide ATC modal, trigger cart update and flyout
+                    document.querySelector('#nby-atc-modal').classList.remove('atc-show');
+              		jQuery('body').trigger('added.ajaxProduct', $(".btn--quick-view"));
+              })
+              .catch((error) => {
+                console.error('Add to cart error:', error);
+              });
+          });
+  
+  		  ///////////////////////////////////
+          // BASIC FUNCTIONALITY SCRIPTS
+  
+  		  // Universal anchor scroll
+  		  jQuery('a[href^="#"]').click(function(){
+              var dest = jQuery(this).attr('href');
+              jQuery('html, body').animate({
+                  scrollTop: jQuery(dest).offset().top - 100
+              }, 'slow');
+          });             
+        });   
+   	}
+  }, 100);
+});
+</script>
